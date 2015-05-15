@@ -11,11 +11,11 @@ private:
 	Evaluator* evaluator;
 	int minimaxTreeDepth;
 
-	int evaluateTreeNode(const Move* move, bool max, int depth);
+	std::pair<int, const Move*> evaluateTreeNode(FieldState* state, bool max, int depth);
 public:
 	GameProcessor(FieldState* initalState, Evaluator* evaluator, int minimaxTreeDepth);
 	void doMove(const Move* move);
-
 	const Move* getBestMove();
 };
+
 #endif

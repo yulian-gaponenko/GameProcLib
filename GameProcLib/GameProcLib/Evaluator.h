@@ -5,7 +5,7 @@
 
 class Evaluator {
 public:
-	int evaluate(FieldState state);
+	int evaluate(FieldState* state);
 };
 
 #endif

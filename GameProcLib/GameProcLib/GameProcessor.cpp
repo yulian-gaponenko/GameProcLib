@@ -1,26 +1,42 @@
+#include <algorithm>
 #include "GameProcessor.h"
+#include "GameProcessorUtils.h"
 
 GameProcessor::GameProcessor(FieldState* initalState, Evaluator* evaluator, int minimaxTreeDepth)
 	: currentState(initalState), evaluator(evaluator), minimaxTreeDepth(minimaxTreeDepth){
 
 }
 
-const Move* GameProcessor::getBestMove() {
-	int bestRating = INT_MIN;
-	const Move* bestMove;
 
-	std::vector<Move*> possibleMoves = currentState->getAllPossibleMoves();
+//evalRating , bestMove from the state
+std::pair<int, const Move*> GameProcessor::evaluateTreeNode(FieldState* state, bool max, int depth) {
+	if (depth == 0) {
+		return std::pair<int, const Move*>(evaluator->evaluate(state), NULL);
+	}
+
+	Move* bestMove = NULL;
+	int bestRating = max ? INT_MIN : INT_MAX;
+
+	std::vector<Move*> possibleMoves = state->getAllPossibleMoves();
+	int evalRating;
 	for (size_t i = 0; i < possibleMoves.size(); ++i) {
-		int currentNodeRating = evaluateTreeNode(possibleMoves[i], true, minimaxTreeDepth);
-		if (bestRating < currentNodeRating) {
-			bestRating = currentNodeRating;
+		FieldState* newState = state->doMove(possibleMoves[i]);
+		evalRating = evaluateTreeNode(newState, !max, depth - 1).first;
+
+		if (GameProcessorUtils::compareMinimax(max, evalRating, bestRating) > 0) {
+			bestRating = evalRating;
 			bestMove = possibleMoves[i];
 		}
 	}
 
-	return bestMove;
+	return std::make_pair(bestRating, bestMove);
 }
 
-int GameProcessor::evaluateTreeNode(const Move* move, bool max, int depth) {
-	move->doMove(currentState);
+void GameProcessor::doMove(const Move* move) {
+	currentState = currentState->doMove(move);
 }
+
+const Move* GameProcessor::getBestMove() {
+	return evaluateTreeNode(currentState, true, minimaxTreeDepth).second;
+}
+
