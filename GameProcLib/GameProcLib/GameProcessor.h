@@ -2,20 +2,18 @@
 #define GAME_PROCESSOR_H
 
 #include "FieldState.h"
-#include "Evaluator.h"
 #include "Move.h"
 
 class GameProcessor {
 private:
-	FieldState* currentState;
-	Evaluator* evaluator;
+	std::shared_ptr<FieldState> currentState;
 	int minimaxTreeDepth;
 
-	std::pair<int, const Move*> evaluateTreeNode(FieldState* state, bool max, int depth);
+	int evaluateTreeNode(std::shared_ptr<FieldState> state, bool max, int depth) const;
 public:
-	GameProcessor(FieldState* initalState, Evaluator* evaluator, int minimaxTreeDepth);
-	void doMove(const Move* move);
-	const Move* getBestMove();
+	GameProcessor(std::shared_ptr<FieldState>initalState, int minimaxTreeDepth);
+	void doMove(std::shared_ptr<const Move> move);
+	std::vector<std::shared_ptr<Move>> evaluatePossibleMoves() const;
 };
 
 #endif

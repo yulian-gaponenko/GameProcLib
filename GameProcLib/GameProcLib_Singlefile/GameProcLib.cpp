@@ -1,5 +1,65 @@
 #include <algorithm>
-#include "GameProcessor.h"
+#include "GameProcLib.h"
+
+//--------------------------------------
+//--------------------------------------
+
+Resource::Resource(int resourceName): resourceName(resourceName) {
+}
+
+int Resource::getResourceName() const {
+	return resourceName;
+}
+
+//--------------------------------------
+//--------------------------------------
+
+GamePiece::GamePiece(int resourceName) : Resource(resourceName) {
+
+}
+
+//--------------------------------------
+//--------------------------------------
+
+Move::Move(int player, std::shared_ptr<GamePiece> doer) : player(player), doer(doer) {
+
+}
+
+int Move::getPlayer() const {
+	return player;
+}
+
+int Move::getNewStateEvaluation() const {
+	return newStateEvaluation;
+}
+
+void Move::setNewStateEvaluation(int evalValue) {
+	this->newStateEvaluation = evalValue;
+}
+
+bool Move::operator < (const Move& other) const {
+	return this->getNewStateEvaluation() > other.getNewStateEvaluation();
+}
+
+//--------------------------------------
+//--------------------------------------
+
+Cell::Cell(int index): index(index) {
+}
+
+int Cell::getIndex() const {
+	return index;
+}
+
+std::shared_ptr<GamePiece> Cell::getOwner() const{
+	return owner;
+}
+void Cell::setOwner(std::shared_ptr<GamePiece> owner) {
+	this->owner = owner;
+}
+
+//--------------------------------------
+//--------------------------------------
 
 GameProcessor::GameProcessor(std::shared_ptr<FieldState> initalState, int minimaxTreeDepth)
 	: currentState(initalState), minimaxTreeDepth(minimaxTreeDepth){
@@ -44,3 +104,5 @@ std::vector<std::shared_ptr<Move>> GameProcessor::evaluatePossibleMoves() const{
 	return possibleMoves;
 }
 
+//--------------------------------------
+//--------------------------------------

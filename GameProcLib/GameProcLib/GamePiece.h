@@ -4,7 +4,9 @@
 #include "Resource.h"
 
 class GamePiece : Resource {
-
+private:
+public:
+	GamePiece(int resourceName);
 };
 
 #endif

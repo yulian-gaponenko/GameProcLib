@@ -33,16 +33,25 @@
     <ClInclude Include="GamePiece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Evaluator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Todo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GamePiece.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Move.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="remarks.txt" />
   </ItemGroup>
 </Project>

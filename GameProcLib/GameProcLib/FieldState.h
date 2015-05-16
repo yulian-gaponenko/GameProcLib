@@ -2,25 +2,23 @@
 #define FIELD_STATE_H
 
 #include <vector>
+#include <memory>
 #include "Cell.h"
 #include "Move.h"
 
 class FieldState {
 private: 
 	std::vector<Cell> field;
-	
-	FieldState(std::vector<Cell> field);
+
 public:
 	FieldState();
-
-	const std::vector<Cell>& getField();
-	
-	std::vector<Move*> getAllPossibleMoves();
-	
-	FieldState* doMove(const Move* move);
+	virtual std::vector<std::shared_ptr<Move>> getAllPossibleMoves() const = 0;
+	virtual std::shared_ptr<FieldState> doMove(std::shared_ptr<const Move> move) = 0;
+	virtual std::shared_ptr<FieldState> undoMove(std::shared_ptr<const Move> move) = 0;
+	virtual int evaluate() = 0;
 	
 	//returns 0 if false, otherwise returns 1-based index of winnnig player
-	int isGameEnd();
+	virtual int isGameEnd() const = 0;
 };
 
 #endif
