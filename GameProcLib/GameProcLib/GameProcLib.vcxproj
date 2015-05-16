@@ -78,22 +78,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Cell.h" />
-    <ClInclude Include="FieldState.h" />
-    <ClInclude Include="GamePiece.h" />
-    <ClInclude Include="GameProcessor.h" />
-    <ClInclude Include="Move.h" />
-    <ClInclude Include="Resource.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="remarks.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Cell.cpp" />
-    <ClCompile Include="GamePiece.cpp" />
-    <ClCompile Include="GameProcessor.cpp" />
-    <ClCompile Include="Move.cpp" />
-    <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="GameProcLib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameProcLib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
