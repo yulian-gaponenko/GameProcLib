@@ -1,3 +1,5 @@
 may be add cell or cellIndex property to gamePiece
 
 may be add playaer property to Resource or at least to gamePiece
+
+on tree node evaluation check if it is a gameEnd

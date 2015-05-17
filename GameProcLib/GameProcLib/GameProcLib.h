@@ -95,7 +95,7 @@ private:
 	std::shared_ptr<FieldState> currentState;
 	int minimaxTreeDepth;
 
-	int evaluateTreeNode(std::shared_ptr<FieldState> state, bool max, int depth) const;
+	int evaluateTreeNode(std::shared_ptr<FieldState> state, bool max, int a, int b, int depth) const;
 public:
 	GameProcessor(std::shared_ptr<FieldState>initalState, int minimaxTreeDepth);
 	void doMove(std::shared_ptr<const Move> move);
