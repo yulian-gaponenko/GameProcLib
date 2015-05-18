@@ -58,8 +58,8 @@ private:
 	int index;
 	GamePiece::ptr owner;
 public:
-	inline int getIndex() const;
-	inline int setIndex(int index);
+	int getIndex() const;
+	void setIndex(int index);
 
 	GamePiece::ptr getOwner() const;
 	void setOwner(GamePiece::ptr owner);
@@ -75,6 +75,8 @@ protected:
 public:
 	typedef std::shared_ptr<FieldState> ptr;
 
+	virtual void notifyEvaluationStarted() = 0;
+	virtual void notifyEvaluationEnded() = 0;
 	virtual std::vector<Move::ptr> getAllPossibleMoves() = 0;
 	virtual FieldState::ptr doMove(Move::ptr move) = 0;
 	virtual FieldState::ptr undoMove(Move::ptr move) = 0;

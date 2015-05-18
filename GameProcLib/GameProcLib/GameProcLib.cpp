@@ -52,7 +52,7 @@ int Cell::getIndex() const {
 	return index;
 }
 
-int Cell::setIndex(int index) {
+void Cell::setIndex(int index) {
 	this->index = index;
 }
 
@@ -101,8 +101,9 @@ void GameProcessor::doMove(Move::ptr move) {
 }
 
 std::vector<Move::ptr> GameProcessor::evaluatePossibleMoves() const {
-	std::vector<Move::ptr> possibleMoves = currentState->getAllPossibleMoves();
+	currentState->notifyEvaluationStarted();
 
+	std::vector<Move::ptr> possibleMoves = currentState->getAllPossibleMoves();
 	int evalRating;
 	FieldState::ptr newState;
 	for (size_t i = 0; i < possibleMoves.size(); ++i) {
@@ -111,7 +112,10 @@ std::vector<Move::ptr> GameProcessor::evaluatePossibleMoves() const {
 		possibleMoves[i]->setNewStateEvaluation(evalRating);
 		currentState->undoMove(possibleMoves[i]);
 	}
-	std::sort(possibleMoves.begin(), possibleMoves.end());
+	
+	currentState->notifyEvaluationEnded();
+
+	std::sort(possibleMoves.begin(), possibleMoves.end());//TODO: custom comparator
 	return possibleMoves;
 }
 

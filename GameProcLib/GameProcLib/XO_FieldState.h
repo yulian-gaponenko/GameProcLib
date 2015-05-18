@@ -2,11 +2,13 @@
 #include <stack>
 #include "GameProcLib.h"
 
-class XO_FieldState : FieldState, public std::enable_shared_from_this<XO_FieldState> {
+class XO_FieldState : public FieldState, public std::enable_shared_from_this<XO_FieldState> {
 private:
 	int w;
 	int h;
 	int currentPlayer;
+	bool evaluationInProgress;
+	int playerWhoStartedEval;
 
 	enum { NO_PLAYER = 0, FIRST_PLAYER, SECOND_PLAYER };
 	enum {NORD_WEST, NORD, NORD_OST, OST, ZUID_OST, ZUID, ZUID_WEST, WEST};
@@ -42,6 +44,8 @@ private:
 	int getStartCell(int moveCell, int lineNum, int direction);
 public:
 	XO_FieldState(int w, int h);
+	virtual void notifyEvaluationStarted();
+	virtual void notifyEvaluationEnded();
 	virtual std::vector<Move::ptr> getAllPossibleMoves();
 	virtual FieldState::ptr doMove(Move::ptr move);
 	virtual FieldState::ptr undoMove(Move::ptr move);

@@ -1,6 +1,6 @@
 #include "GameProcLib.h"
 
-class XO_Move : Move {
+class XO_Move : public Move {
 private:
 	int indexTo;
 public:
