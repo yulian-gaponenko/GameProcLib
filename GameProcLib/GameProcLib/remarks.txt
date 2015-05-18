@@ -3,3 +3,7 @@ may be add cell or cellIndex property to gamePiece
 may be add playaer property to Resource or at least to gamePiece
 
 on tree node evaluation check if it is a gameEnd
+
+you can do part of the job of evaluating and of finding possible moves in isGameEnd()
+
+in doMove() changes value of current player

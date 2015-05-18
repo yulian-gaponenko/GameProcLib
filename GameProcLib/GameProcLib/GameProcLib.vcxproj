@@ -82,9 +82,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameProcLib.cpp" />
+    <ClCompile Include="XO_FieldState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameProcLib.h" />
+    <ClInclude Include="XO_FieldState.h" />
+    <ClInclude Include="XO_Move.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

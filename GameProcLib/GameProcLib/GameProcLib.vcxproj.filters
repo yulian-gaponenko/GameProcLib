@@ -16,6 +16,9 @@
     <Filter Include="GameProcLib">
       <UniqueIdentifier>{c84a0118-815f-48c6-abab-9c1f231e5149}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameProcLib\XO_Implementation">
+      <UniqueIdentifier>{8b5f79b0-7b9c-4d55-81ff-9f71a75bdb4a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="remarks.txt" />
@@ -24,10 +27,19 @@
     <ClCompile Include="GameProcLib.cpp">
       <Filter>GameProcLib</Filter>
     </ClCompile>
+    <ClCompile Include="XO_FieldState.cpp">
+      <Filter>GameProcLib\XO_Implementation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameProcLib.h">
       <Filter>GameProcLib</Filter>
+    </ClInclude>
+    <ClInclude Include="XO_FieldState.h">
+      <Filter>GameProcLib\XO_Implementation</Filter>
+    </ClInclude>
+    <ClInclude Include="XO_Move.h">
+      <Filter>GameProcLib\XO_Implementation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

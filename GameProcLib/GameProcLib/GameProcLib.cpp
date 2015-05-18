@@ -4,7 +4,11 @@
 //--------------------------------------
 //--------------------------------------
 
-Resource::Resource(int resourceName): resourceName(resourceName) {
+Resource::Resource(int resourceName, int player): resourceName(resourceName), player(player) {
+}
+
+int Resource::getPlayer() const {
+	return player;
 }
 
 int Resource::getResourceName() const {
@@ -14,15 +18,15 @@ int Resource::getResourceName() const {
 //--------------------------------------
 //--------------------------------------
 
-GamePiece::GamePiece(int resourceName) : Resource(resourceName) {
+GamePiece::GamePiece(int resourceName, int player) : Resource(resourceName, player) {
 
 }
 
 //--------------------------------------
 //--------------------------------------
 
-Move::Move(int player, std::shared_ptr<GamePiece> doer) : player(player), doer(doer) {
-
+Move::Move(int player, GamePiece::ptr doer) : player(player), doer(doer) {
+	newStateEvaluation = 0;
 }
 
 int Move::getPlayer() const {
@@ -44,40 +48,41 @@ bool Move::operator < (const Move& other) const {
 //--------------------------------------
 //--------------------------------------
 
-Cell::Cell(int index): index(index) {
-}
-
 int Cell::getIndex() const {
 	return index;
 }
 
-std::shared_ptr<GamePiece> Cell::getOwner() const{
+int Cell::setIndex(int index) {
+	this->index = index;
+}
+
+GamePiece::ptr Cell::getOwner() const{
 	return owner;
 }
-void Cell::setOwner(std::shared_ptr<GamePiece> owner) {
+void Cell::setOwner(GamePiece::ptr owner) {
 	this->owner = owner;
 }
 
 //--------------------------------------
 //--------------------------------------
 
-GameProcessor::GameProcessor(std::shared_ptr<FieldState> initalState, int minimaxTreeDepth)
+GameProcessor::GameProcessor(FieldState::ptr initalState, int minimaxTreeDepth)
 	: currentState(initalState), minimaxTreeDepth(minimaxTreeDepth){
 
 }
 
 
-int GameProcessor::evaluateTreeNode(std::shared_ptr<FieldState> state, bool max, int a, int b, int depth) const{
-	if (depth == 0) {
+int GameProcessor::evaluateTreeNode(FieldState::ptr state, bool max, int a, int b, int depth) const{
+	if (depth == 0 || state->isGameEnd()) {
 		return state->evaluate();
 	}
 
 	int bestRating = max ? INT_MIN : INT_MAX;
 
-	std::vector<std::shared_ptr<Move>> possibleMoves = state->getAllPossibleMoves();
+	std::vector<Move::ptr> possibleMoves = state->getAllPossibleMoves();
 	int evalRating;
 	for (size_t i = 0; i < possibleMoves.size(); ++i) {
-		std::shared_ptr<FieldState> newState = state->doMove(possibleMoves[i]);
+		FieldState::ptr newState = state->doMove(possibleMoves[i]);
 		evalRating = evaluateTreeNode(newState, !max, a, b, depth - 1);
 		bestRating = max ? std::max(bestRating, evalRating) : std::min(bestRating, evalRating);
 		if (max)
@@ -91,15 +96,15 @@ int GameProcessor::evaluateTreeNode(std::shared_ptr<FieldState> state, bool max,
 	return bestRating;
 }
 
-void GameProcessor::doMove(std::shared_ptr<const Move> move) {
+void GameProcessor::doMove(Move::ptr move) {
 	currentState = currentState->doMove(move);
 }
 
-std::vector<std::shared_ptr<Move>> GameProcessor::evaluatePossibleMoves() const{
-	std::vector<std::shared_ptr<Move>> possibleMoves = currentState->getAllPossibleMoves();
+std::vector<Move::ptr> GameProcessor::evaluatePossibleMoves() const {
+	std::vector<Move::ptr> possibleMoves = currentState->getAllPossibleMoves();
 
 	int evalRating;
-	std::shared_ptr<FieldState> newState;
+	FieldState::ptr newState;
 	for (size_t i = 0; i < possibleMoves.size(); ++i) {
 		newState = currentState->doMove(possibleMoves[i]);
 		evalRating = evaluateTreeNode(newState, true, INT_MIN, INT_MAX, minimaxTreeDepth);

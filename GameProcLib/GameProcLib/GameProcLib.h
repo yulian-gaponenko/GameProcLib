@@ -4,16 +4,6 @@
 //--------------------------------------
 //--------------------------------------
 
-class Resource;
-class GamePiece;
-class Move;
-class Cell;
-class FieldState;
-class GameProcessor;
-
-//--------------------------------------
-//--------------------------------------
-
 #include <memory>
 #include <vector>
 
@@ -22,19 +12,23 @@ class GameProcessor;
 
 class Resource {
 private:
+	int player;
 	int resourceName;
 public:
-	Resource(int resourceName);
+	Resource(int resourceName, int player);
+	int getPlayer() const;
 	int getResourceName() const;
 };
 
 //--------------------------------------
 //--------------------------------------
 
-class GamePiece : Resource {
+class GamePiece : public Resource {
 private:
 public:
-	GamePiece(int resourceName);
+	typedef std::shared_ptr<GamePiece> ptr;
+
+	GamePiece(int resourceName, int player);
 };
 
 //--------------------------------------
@@ -44,9 +38,11 @@ class Move {
 private:
 	int player;
 	int newStateEvaluation;
-	std::shared_ptr<GamePiece> doer;
+	GamePiece::ptr doer;
 public:
-	Move(int player, std::shared_ptr<GamePiece> doer);
+	typedef std::shared_ptr<Move> ptr;
+	
+	Move(int player, GamePiece::ptr doer);
 	int getPlayer() const;
 	int getNewStateEvaluation() const;
 	void setNewStateEvaluation(int evalValue);
@@ -60,31 +56,31 @@ public:
 class Cell {
 private:
 	int index;
-	std::shared_ptr<GamePiece> owner;
+	GamePiece::ptr owner;
 public:
-	Cell(int index);
 	inline int getIndex() const;
+	inline int setIndex(int index);
 
-	std::shared_ptr<GamePiece> getOwner() const;
-	void setOwner(std::shared_ptr<GamePiece> owner);
+	GamePiece::ptr getOwner() const;
+	void setOwner(GamePiece::ptr owner);
 };
 
 //--------------------------------------
 //--------------------------------------
 
 class FieldState {
-private: 
+protected: 
 	std::vector<Cell> field;
 
 public:
-	FieldState();
-	virtual std::vector<std::shared_ptr<Move>> getAllPossibleMoves() const = 0;
-	virtual std::shared_ptr<FieldState> doMove(std::shared_ptr<const Move> move) = 0;
-	virtual std::shared_ptr<FieldState> undoMove(std::shared_ptr<const Move> move) = 0;
+	typedef std::shared_ptr<FieldState> ptr;
+
+	virtual std::vector<Move::ptr> getAllPossibleMoves() = 0;
+	virtual FieldState::ptr doMove(Move::ptr move) = 0;
+	virtual FieldState::ptr undoMove(Move::ptr move) = 0;
 	virtual int evaluate() = 0;
 	
-	//returns 0 if false, otherwise returns 1-based index of winnnig player
-	virtual int isGameEnd() const = 0;
+	virtual bool isGameEnd() = 0;
 };
 
 //--------------------------------------
@@ -92,14 +88,14 @@ public:
 
 class GameProcessor {
 private:
-	std::shared_ptr<FieldState> currentState;
+	FieldState::ptr currentState;
 	int minimaxTreeDepth;
 
-	int evaluateTreeNode(std::shared_ptr<FieldState> state, bool max, int a, int b, int depth) const;
+	int evaluateTreeNode(FieldState::ptr state, bool max, int a, int b, int depth) const;
 public:
-	GameProcessor(std::shared_ptr<FieldState>initalState, int minimaxTreeDepth);
-	void doMove(std::shared_ptr<const Move> move);
-	std::vector<std::shared_ptr<Move>> evaluatePossibleMoves() const;
+	GameProcessor(FieldState::ptr initalState, int minimaxTreeDepth);
+	void doMove(Move::ptr move);
+	std::vector<Move::ptr> evaluatePossibleMoves() const;
 };
 
 //--------------------------------------
