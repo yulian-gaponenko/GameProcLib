@@ -171,21 +171,21 @@ FieldState::ptr XO_FieldState::doMove(Move::ptr move) {
 	for (size_t i = 0; i < lineChanges.size(); ++i) {
 		if (lineChanges[i].isAlive) {
 			if (currentPlayer == FIRST_PLAYER)
-				++lines.firstPlayer[lineChanges[i].len + 1];//////////////!!!!!!!!!! not lineChanges[i].len + 1 but lineChanges[i].len. affect rating eval
+				++lines.firstPlayer[lineChanges[i].len];//////////////!!!!!!!!!! not lineChanges[i].len + 1 but lineChanges[i].len. affect rating eval
 			else
-				++lines.secondPlayer[lineChanges[i].len + 1];
+				++lines.secondPlayer[lineChanges[i].len];
 			if (lineChanges[i].len > 0) {
 				if (currentPlayer == FIRST_PLAYER)
-					--lines.firstPlayer[lineChanges[i].len];
+					--lines.firstPlayer[lineChanges[i].len - 1];
 				else
-					--lines.secondPlayer[lineChanges[i].len];
+					--lines.secondPlayer[lineChanges[i].len - 1];
 			}
 		}
 		else {
 			if (currentPlayer == FIRST_PLAYER)
-				--lines.secondPlayer[lineChanges[i].len];
+				--lines.secondPlayer[lineChanges[i].len - 1];
 			else 
-				--lines.firstPlayer[lineChanges[i].len];
+				--lines.firstPlayer[lineChanges[i].len - 1];
 		}
 		
 	}
@@ -221,21 +221,21 @@ FieldState::ptr XO_FieldState::undoMove(Move::ptr move) {
 	for (size_t i = 0; i < lineChanges.size(); ++i) {
 		if (lineChanges[i].isAlive) {
 			if (prevPlayer == FIRST_PLAYER)
-				--lines.firstPlayer[lineChanges[i].len + 1];
+				--lines.firstPlayer[lineChanges[i].len];
 			else
-				--lines.secondPlayer[lineChanges[i].len + 1];
+				--lines.secondPlayer[lineChanges[i].len];
 			if (lineChanges[i].len > 0) {
 				if (prevPlayer == FIRST_PLAYER)
-					++lines.firstPlayer[lineChanges[i].len];
+					++lines.firstPlayer[lineChanges[i].len - 1];
 				else
-					++lines.secondPlayer[lineChanges[i].len];
+					++lines.secondPlayer[lineChanges[i].len - 1];
 			}
 		}
 		else {
 			if (prevPlayer == FIRST_PLAYER)
-				++lines.secondPlayer[lineChanges[i].len];
+				++lines.secondPlayer[lineChanges[i].len - 1];
 			else
-				++lines.firstPlayer[lineChanges[i].len];
+				++lines.firstPlayer[lineChanges[i].len - 1];
 		}
 
 	}
