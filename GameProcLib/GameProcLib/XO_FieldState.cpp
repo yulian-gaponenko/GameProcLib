@@ -29,7 +29,7 @@ std::vector<Move::ptr> XO_FieldState::getAllPossibleMoves() {
 	for (std::unordered_map<int, Move::ptr>::iterator it = possibleMoves.begin(); it != possibleMoves.end(); ++it) {
 		moves[i++] = it->second;
 	}
-	//std::sort(moves.begin(), moves.end());//add custom comparator
+	std::sort(moves.begin(), moves.end());
 	return moves;
 }
 
@@ -99,7 +99,6 @@ int XO_FieldState::shift(int cell, int direction) {
 
 FieldState::ptr XO_FieldState::doMove(Move::ptr move) { 
 	XO_Move* xoMove = (XO_Move*) move.get();
-	
 	std::vector<LineChange> lineChanges;
 	std::unordered_map<int, int> moveChanges;
 	int cell;
@@ -162,7 +161,9 @@ FieldState::ptr XO_FieldState::doMove(Move::ptr move) {
 			}
 		}
 	}
-	moveChanges[moveCell] = -possibleMoves[moveCell]->getNewStateEvaluation();/////// what if moveCell doesn't exist? not possible as it is used as move? no. from human side
+	if (!possibleMoves[moveCell])
+		possibleMoves[moveCell] = std::make_shared<XO_Move>(XO_Move(NO_PLAYER, std::shared_ptr<GamePiece>(), moveCell));
+	moveChanges[moveCell] = -possibleMoves[moveCell]->getNewStateEvaluation();
 
 	savedLineChanges.push(lineChanges);
 	savedMoveChanges.push(moveChanges);
@@ -245,9 +246,11 @@ FieldState::ptr XO_FieldState::undoMove(Move::ptr move) {
 			possibleMoves[it->first] = move = std::make_shared<XO_Move>(XO_Move(NO_PLAYER, std::shared_ptr<GamePiece>(), it->first));
 		}
 		move->setNewStateEvaluation(move->getNewStateEvaluation() - it->second);
+		if (move->getNewStateEvaluation() == 0)
+			possibleMoves.erase(it->first);
 	}
 
-	field[xoMove->getIndexTo()].getOwner().reset();
+	field[xoMove->getIndexTo()].setOwner(GamePiece::ptr());
 	currentPlayer = currentPlayer == FIRST_PLAYER ? SECOND_PLAYER : FIRST_PLAYER;
 
 	return shared_from_this();

@@ -5,6 +5,7 @@
 //--------------------------------------
 
 Resource::Resource(int resourceName, int player): resourceName(resourceName), player(player) {
+
 }
 
 int Resource::getPlayer() const {
@@ -115,8 +116,12 @@ std::vector<Move::ptr> GameProcessor::evaluatePossibleMoves() const {
 	
 	currentState->notifyEvaluationEnded();
 
-	std::sort(possibleMoves.begin(), possibleMoves.end());//TODO: custom comparator
+	std::sort(possibleMoves.begin(), possibleMoves.end());
 	return possibleMoves;
+}
+
+bool operator < (Move::ptr m1, Move::ptr m2) {
+	return m1->getNewStateEvaluation() > m2->getNewStateEvaluation();
 }
 
 //--------------------------------------
