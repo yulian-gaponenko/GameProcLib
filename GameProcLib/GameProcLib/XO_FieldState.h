@@ -36,9 +36,9 @@ private:
 	LinesStatistics lines;
 	//cell index, move
 	std::unordered_map<int, Move::ptr> possibleMoves;
-	std::stack<std::vector<LineChange>> savedLineChanges;
+	std::stack<std::shared_ptr<std::vector<LineChange>>> savedLineChanges;
 	//cell index, moveEvalDelta
-	std::stack<std::unordered_map<int, int>> savedMoveChanges;
+	std::stack<std::shared_ptr<std::unordered_map<int, int>>> savedMoveChanges;
 
 	int shift(int cell, int direction);
 	int getStartCell(int moveCell, int lineNum, int direction);

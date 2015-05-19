@@ -11,7 +11,8 @@ XO_FieldState::XO_FieldState(int w, int h) : w(w), h(h) {
 	evaluationInProgress = false;
 
 	int middle = ceil((double)w / 2);
-	possibleMoves[middle * w + middle] = std::make_shared<XO_Move>(XO_Move(NO_PLAYER, std::shared_ptr<GamePiece>(), middle * w + middle));
+	possibleMoves[middle * w + middle] = std::make_shared<XO_Move>(NO_PLAYER, std::shared_ptr<GamePiece>(), middle * w + middle);
+	possibleMoves[middle * w + middle]->setNewStateEvaluation(1);
 }
 
 void XO_FieldState::notifyEvaluationStarted(){
@@ -20,6 +21,8 @@ void XO_FieldState::notifyEvaluationStarted(){
 }
 void XO_FieldState::notifyEvaluationEnded() {
 	evaluationInProgress = false;
+	std::swap(savedLineChanges, std::stack<std::shared_ptr<std::vector<LineChange>>>());
+	std::swap(savedMoveChanges, std::stack<std::shared_ptr<std::unordered_map<int, int>>>());
 }
 
 std::vector<Move::ptr> XO_FieldState::getAllPossibleMoves() {
@@ -30,6 +33,9 @@ std::vector<Move::ptr> XO_FieldState::getAllPossibleMoves() {
 		moves[i++] = it->second;
 	}
 	std::sort(moves.begin(), moves.end());
+	int maxNumOfMoves = 30;
+	if (moves.size() > maxNumOfMoves)
+		return std::vector<Move::ptr>(moves.begin(), moves.begin() + maxNumOfMoves);
 	return moves;
 }
 
@@ -99,8 +105,9 @@ int XO_FieldState::shift(int cell, int direction) {
 
 FieldState::ptr XO_FieldState::doMove(Move::ptr move) { 
 	XO_Move* xoMove = (XO_Move*) move.get();
-	std::vector<LineChange> lineChanges;
-	std::unordered_map<int, int> moveChanges;
+	std::shared_ptr<std::vector<LineChange>> lineChanges = std::make_shared<std::vector<LineChange>>();
+	std::shared_ptr<std::unordered_map<int, int>> moveChanges = std::make_shared<std::unordered_map<int, int>>();
+
 	int cell;
 	int moveCell = xoMove->getIndexTo();
 	for (int dir = ZUID_OST; dir <= WEST; ++dir) {
@@ -143,17 +150,14 @@ FieldState::ptr XO_FieldState::doMove(Move::ptr move) {
 					if (lc.player != currentPlayer) {
 						lc.isAlive = false;
 					}
-					lineChanges.push_back(lc);
+					lineChanges->push_back(lc);
 					for (int c = 0; c < 5; ++c) {
 						int index = line.cells[c];
-						if (!field[index].getOwner() && index != moveCell && moveChanges[index] != INT_MAX) {
-							if (lc.len)
-								moveChanges[index] -= std::pow(10, 2 * (lc.len));
+						if (!field[index].getOwner() && index != moveCell && (*moveChanges)[index] != INT_MAX) {
+							if (lc.len > 0)
+								(*moveChanges)[index] -= std::pow(10, 2 * (lc.len - 1));
 							if (lc.isAlive) {
-								if (lc.len == 4)
-									moveChanges[index] = INT_MAX; //when adding to possible moves - change delta value to (INT_MAX - currentEvalValue)
-								else 
-									moveChanges[index] += std::pow(10, 2 * (lc.len + 1));
+								(*moveChanges)[index] += std::pow(10, 2 * (lc.len));
 							}
 						}
 					}
@@ -162,48 +166,46 @@ FieldState::ptr XO_FieldState::doMove(Move::ptr move) {
 		}
 	}
 	if (!possibleMoves[moveCell])
-		possibleMoves[moveCell] = std::make_shared<XO_Move>(XO_Move(NO_PLAYER, std::shared_ptr<GamePiece>(), moveCell));
-	moveChanges[moveCell] = -possibleMoves[moveCell]->getNewStateEvaluation();
+		possibleMoves[moveCell] = std::make_shared<XO_Move>(NO_PLAYER, std::shared_ptr<GamePiece>(), moveCell);
+	(*moveChanges)[moveCell] = -possibleMoves[moveCell]->getNewStateEvaluation();
 
 	savedLineChanges.push(lineChanges);
 	savedMoveChanges.push(moveChanges);
 
-	for (size_t i = 0; i < lineChanges.size(); ++i) {
-		if (lineChanges[i].isAlive) {
+	for (size_t i = 0; i < lineChanges->size(); ++i) {
+		if ((*lineChanges)[i].isAlive) {
 			if (currentPlayer == FIRST_PLAYER)
-				++lines.firstPlayer[lineChanges[i].len];//////////////!!!!!!!!!! not lineChanges[i].len + 1 but lineChanges[i].len. affect rating eval
+				++lines.firstPlayer[(*lineChanges)[i].len];
 			else
-				++lines.secondPlayer[lineChanges[i].len];
-			if (lineChanges[i].len > 0) {
+				++lines.secondPlayer[(*lineChanges)[i].len];
+			if ((*lineChanges)[i].len > 0) {
 				if (currentPlayer == FIRST_PLAYER)
-					--lines.firstPlayer[lineChanges[i].len - 1];
+					--lines.firstPlayer[(*lineChanges)[i].len - 1];
 				else
-					--lines.secondPlayer[lineChanges[i].len - 1];
+					--lines.secondPlayer[(*lineChanges)[i].len - 1];
 			}
 		}
 		else {
 			if (currentPlayer == FIRST_PLAYER)
-				--lines.secondPlayer[lineChanges[i].len - 1];
+				--lines.secondPlayer[(*lineChanges)[i].len - 1];
 			else 
-				--lines.firstPlayer[lineChanges[i].len - 1];
+				--lines.firstPlayer[(*lineChanges)[i].len - 1];
 		}
 		
 	}
 
-	for (std::unordered_map<int, int>::iterator it = moveChanges.begin(); it != moveChanges.end(); ++it) {
-		Move::ptr move = possibleMoves[it->first];//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11 create manualy if not exists
+	for (std::unordered_map<int, int>::iterator it = moveChanges->begin(); it != moveChanges->end(); ++it) {
+		Move::ptr move = possibleMoves[it->first];
 		if (!move) {
-			possibleMoves[it->first] = move = std::make_shared<XO_Move>(XO_Move(NO_PLAYER, std::shared_ptr<GamePiece>(), it->first));
+			possibleMoves[it->first] = move = std::make_shared<XO_Move>(NO_PLAYER, std::shared_ptr<GamePiece>(), it->first);
 		}
-		if (it->second == INT_MAX)
-			it->second = INT_MAX - move->getNewStateEvaluation();
 		move->setNewStateEvaluation(move->getNewStateEvaluation() + it->second);
 		if (move->getNewStateEvaluation() == 0) {
 			possibleMoves.erase(it->first);
 		}
 	}
 
-	field[xoMove->getIndexTo()].setOwner(std::make_shared<GamePiece>(GamePiece(0, currentPlayer)));
+	field[xoMove->getIndexTo()].setOwner(std::make_shared<GamePiece>(0, currentPlayer));
 	currentPlayer = currentPlayer == FIRST_PLAYER ? SECOND_PLAYER : FIRST_PLAYER;
 
 	return shared_from_this();
@@ -212,38 +214,38 @@ FieldState::ptr XO_FieldState::doMove(Move::ptr move) {
 FieldState::ptr XO_FieldState::undoMove(Move::ptr move) { 
 	XO_Move* xoMove = (XO_Move*)move.get();
 
-	std::vector<LineChange> lineChanges = savedLineChanges.top();
-	savedLineChanges.pop();
-	std::unordered_map<int, int> moveChanges = savedMoveChanges.top();
+	std::shared_ptr<std::vector<LineChange>> lineChanges = savedLineChanges.top();
+	std::shared_ptr<std::unordered_map<int, int>> moveChanges = savedMoveChanges.top();
 	savedMoveChanges.pop();
+	savedLineChanges.pop();
 
 	int prevPlayer = currentPlayer == FIRST_PLAYER ? SECOND_PLAYER : FIRST_PLAYER;
-	for (size_t i = 0; i < lineChanges.size(); ++i) {
-		if (lineChanges[i].isAlive) {
+	for (size_t i = 0; i < lineChanges->size(); ++i) {
+		if ((*lineChanges)[i].isAlive) {
 			if (prevPlayer == FIRST_PLAYER)
-				--lines.firstPlayer[lineChanges[i].len];
+				--lines.firstPlayer[(*lineChanges)[i].len];
 			else
-				--lines.secondPlayer[lineChanges[i].len];
-			if (lineChanges[i].len > 0) {
+				--lines.secondPlayer[(*lineChanges)[i].len];
+			if ((*lineChanges)[i].len > 0) {
 				if (prevPlayer == FIRST_PLAYER)
-					++lines.firstPlayer[lineChanges[i].len - 1];
+					++lines.firstPlayer[(*lineChanges)[i].len - 1];
 				else
-					++lines.secondPlayer[lineChanges[i].len - 1];
+					++lines.secondPlayer[(*lineChanges)[i].len - 1];
 			}
 		}
 		else {
 			if (prevPlayer == FIRST_PLAYER)
-				++lines.secondPlayer[lineChanges[i].len - 1];
+				++lines.secondPlayer[(*lineChanges)[i].len - 1];
 			else
-				++lines.firstPlayer[lineChanges[i].len - 1];
+				++lines.firstPlayer[(*lineChanges)[i].len - 1];
 		}
 
 	}
 
-	for (std::unordered_map<int, int>::iterator it = moveChanges.begin(); it != moveChanges.end(); ++it) {
+	for (std::unordered_map<int, int>::iterator it = moveChanges->begin(); it != moveChanges->end(); ++it) {
 		Move::ptr move = possibleMoves[it->first];
 		if (!move) {
-			possibleMoves[it->first] = move = std::make_shared<XO_Move>(XO_Move(NO_PLAYER, std::shared_ptr<GamePiece>(), it->first));
+			possibleMoves[it->first] = move = std::make_shared<XO_Move>(NO_PLAYER, std::shared_ptr<GamePiece>(), it->first);
 		}
 		move->setNewStateEvaluation(move->getNewStateEvaluation() - it->second);
 		if (move->getNewStateEvaluation() == 0)
@@ -268,8 +270,13 @@ int XO_FieldState::evaluate() {
 		enemyStats = lines.firstPlayer;
 	}
 
+	if (currPlayerStats[4] > 0)
+		return INT_MAX;
+	if (enemyStats[4] > 0)
+		return INT_MIN;
+
 	int resultingEval = 0;
-	for (int i = 1; i < 5; ++i){
+	for (int i = 0; i < 5; ++i){
 		resultingEval += currPlayerStats[i] * std::pow(10, 2*i);
 		resultingEval -= enemyStats[i] * std::pow(10, 2 * i);
 	}
@@ -278,5 +285,5 @@ int XO_FieldState::evaluate() {
 }
 
 bool XO_FieldState::isGameEnd() { 
-	return lines.firstPlayer[5] > 0 || lines.secondPlayer[5] > 0;
+	return lines.firstPlayer[4] > 0 || lines.secondPlayer[4] > 0;
 }

@@ -85,6 +85,7 @@ int GameProcessor::evaluateTreeNode(FieldState::ptr state, bool max, int a, int 
 	for (size_t i = 0; i < possibleMoves.size(); ++i) {
 		FieldState::ptr newState = state->doMove(possibleMoves[i]);
 		evalRating = evaluateTreeNode(newState, !max, a, b, depth - 1);
+		newState->undoMove(possibleMoves[i]);
 		bestRating = max ? std::max(bestRating, evalRating) : std::min(bestRating, evalRating);
 		if (max)
 			a = std::max(a, evalRating);
@@ -109,7 +110,7 @@ std::vector<Move::ptr> GameProcessor::evaluatePossibleMoves() const {
 	FieldState::ptr newState;
 	for (size_t i = 0; i < possibleMoves.size(); ++i) {
 		newState = currentState->doMove(possibleMoves[i]);
-		evalRating = evaluateTreeNode(newState, true, INT_MIN, INT_MAX, minimaxTreeDepth);
+		evalRating = evaluateTreeNode(newState, false, INT_MIN, INT_MAX, minimaxTreeDepth);
 		possibleMoves[i]->setNewStateEvaluation(evalRating);
 		currentState->undoMove(possibleMoves[i]);
 	}
