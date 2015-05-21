@@ -121,6 +121,10 @@ std::vector<Move::ptr> GameProcessor::evaluatePossibleMoves() const {
 	return possibleMoves;
 }
 
+bool GameProcessor::isGameEnd() {
+	return currentState->isGameEnd();
+}
+
 bool operator < (Move::ptr m1, Move::ptr m2) {
 	return m1->getNewStateEvaluation() > m2->getNewStateEvaluation();
 }

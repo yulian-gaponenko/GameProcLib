@@ -98,6 +98,7 @@ public:
 	GameProcessor(FieldState::ptr initalState, int minimaxTreeDepth);
 	void doMove(Move::ptr move);
 	std::vector<Move::ptr> evaluatePossibleMoves() const;
+	bool isGameEnd();
 
 	friend bool operator < (Move::ptr m1, Move::ptr m2);
 };
