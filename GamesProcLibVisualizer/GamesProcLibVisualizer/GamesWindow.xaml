@@ -16,7 +16,7 @@
                     <ComboBox Name="GameComboBox" Height="25" Margin="4,39,4,165" SelectedIndex="0" 
                               SelectionChanged="GameComboBox_OnSelectionChanged">
                         <ComboBoxItem Content="Game: Tic-tac-toe" HorizontalAlignment="Left" Width="177"/>
-                        <ComboBoxItem Content="Game: Checkers" HorizontalAlignment="Left" Width="177"/>
+<!--                        <ComboBoxItem Content="Game: Checkers" HorizontalAlignment="Left" Width="177"/>-->
                     </ComboBox>
                     <ComboBox Name="Player1TypeComboBox" Height="25" Margin="4,69,4,135" SelectedIndex="0"
                               SelectionChanged="Player1TypeComboBox_OnSelectionChanged">
