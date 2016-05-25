@@ -1,5 +1,5 @@
 ﻿//namespace GameGenLib.RulesParser {
-//    public class GameRulesXmlParser {
+//    public class GameXmlParser {
 //        /// <remarks/>
 //        [System.SerializableAttribute()]
 //        [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -61,7 +61,7 @@
 //            }
 //
 //            /// <remarks/>
-//            public GameRules Rules {
+//            public GameRules GameRules {
 //                get {
 //                    return this.rulesField;
 //                }
