@@ -1,7 +1,9 @@
 ﻿using GameGenLib.GameEntities;
 
 namespace GameGenLib.Logics.Pattern {
-    public interface IPattern {
-        ICells Find(Cell cell, params GameElement[] parameters);
+    internal interface IPattern {
+        bool Find(CellSequences cellSequences, IPropertyContainer[] args);
+
+        ShiftDirection NextCellDir { get; }
     }
 }

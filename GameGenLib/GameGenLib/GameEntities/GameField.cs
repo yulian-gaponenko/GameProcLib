@@ -3,16 +3,20 @@ using GameGenLib.Logics;
 
 namespace GameGenLib.GameEntities {
     public class GameField : GameElement {
-        public SeparateCells FieldCells { get; }
+        private Cell[] FieldCells { get; }
 
         public GameField(int size) {
-            FieldCells = new SeparateCells(new List<Cell>(size));
+            FieldCells = new Cell[size];
             Size = size;
             for (int i = 0; i < size; ++i) {
-                FieldCells.Cells.Add(new Cell());;
+                FieldCells[i] = new Cell(i % size, i / size, this);
             }
         }
 
         public int Size { get; }
+
+        public Cell GetCell(int x, int y) {
+            return FieldCells[y * Size + x];
+        }
     }
 }

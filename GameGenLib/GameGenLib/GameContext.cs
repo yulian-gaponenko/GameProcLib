@@ -10,8 +10,7 @@ namespace GameGenLib {
         }
 
         public GameField Field { get; }
+
         public IList<Player> Players { get; }
-
-
     }
 }

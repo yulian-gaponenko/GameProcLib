@@ -40,6 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameEntities\ShiftDirection.cs" />
+    <Compile Include="Logics\CellSequences.cs" />
+    <Compile Include="Logics\Pattern\PatternAnd.cs" />
+    <Compile Include="Logics\Pattern\PatternCheck.cs" />
     <Compile Include="Logics\PropertyAccessers\ConstantAccessor.cs" />
     <Compile Include="Logics\PropertyAccessers\IPropertyAccessor.cs" />
     <Compile Include="Logics\PropertyAccessers\ArgumentPropertyAccessor.cs" />
@@ -52,21 +56,20 @@
     <Compile Include="GameEntities\GameElement.cs" />
     <Compile Include="GameEntities\IPropertyContainer.cs" />
     <Compile Include="GameEntities\Player.cs" />
-    <Compile Include="GameEntities\SeparateCells.cs" />
-    <Compile Include="GameEntities\SequentialCells.cs" />
     <Compile Include="GameContext.cs" />
     <Compile Include="Logics\Pattern\PatternOr.cs" />
     <Compile Include="Logics\Pattern\IPattern.cs" />
     <Compile Include="PropertyLocation.cs" />
-    <Compile Include="GameEntities\ICells.cs" />
     <Compile Include="Logics\IfElse.cs" />
     <Compile Include="Logics\ILogic.cs" />
     <Compile Include="Logics\LogicAgregator.cs" />
     <Compile Include="Logics\PropertySetter.cs" />
     <Compile Include="Logics\PropertyConstraint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RulesParser\GameRulesParser.cs" />
+    <Compile Include="RulesParser\GameRulesXmlParser.cs" />
+    <Compile Include="RulesParser\GameRulesParser11.cs" />
     <Compile Include="RulesParser\IRulesParser.cs" />
+    <Compile Include="Utils\SingletonList.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,21 +2,25 @@
 using GameGenLib.GameEntities;
 
 namespace GameGenLib.Logics.Pattern {
-    public class PatternOr : IPattern {
-        public PatternOr(List<IPattern> childPatterns) {
-            ChildPatterns = childPatterns;
+    internal class PatternOr : IPattern {
+        public ShiftDirection NextCellDir { get; }
+        public List<IPattern> ChildPatterns { get; }
+
+        public PatternOr(List<IPattern> childPatterns) : this(childPatterns, ShiftDirection.None) {
         }
 
-        public List<IPattern> ChildPatterns { get; }
-        public ICells Find(Cell cell, params GameElement[] parameters) {
-            List<ICells> results = new List<ICells>();
-            foreach (var childPattern in ChildPatterns) {
-                var result = childPattern.Find(cell, parameters);
-                if (result != null) {
-                    results.Add(result);
-                }
-            }
-            return results.Count > 0 ? new SequentialCells(results) : null;
+        public PatternOr(List<IPattern> childPatterns, ShiftDirection nextCellDir) {
+            ChildPatterns = childPatterns;
+            NextCellDir = nextCellDir;
         }
+
+        public bool Find(CellSequences cellSequences, IPropertyContainer[] parameters) {
+            bool any = false;
+            foreach (var childPattern in ChildPatterns) {
+                any |= childPattern.Find(cellSequences, parameters);
+            }
+            return any;
+        }
+
     }
 }
