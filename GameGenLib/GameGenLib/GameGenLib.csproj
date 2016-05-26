@@ -40,10 +40,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameEntities\GameRules.cs" />
     <Compile Include="GameEntities\ShiftDirection.cs" />
-    <Compile Include="Logics\CellSequences.cs" />
+    <Compile Include="GameParser\LogicsParser.cs" />
+    <Compile Include="Logics\AddCells.cs" />
+    <Compile Include="Logics\CellsCopier.cs" />
+    <Compile Include="Logics\CellsPropertySetter.cs" />
+    <Compile Include="Logics\Cells\CellsCollection.cs" />
+    <Compile Include="Logics\Cells\CellsSequences.cs" />
+    <Compile Include="Logics\Cells\CellsSet.cs" />
+    <Compile Include="Logics\Cells\ICells.cs" />
+    <Compile Include="Logics\Comparison\Equals.cs" />
+    <Compile Include="Logics\Comparison\IComparison.cs" />
+    <Compile Include="Logics\LogicInvocatorWithSpecificArgs.cs" />
     <Compile Include="Logics\Pattern\PatternAnd.cs" />
     <Compile Include="Logics\Pattern\PatternCheck.cs" />
+    <Compile Include="Logics\Pattern\PatternsAggregator.cs" />
     <Compile Include="Logics\PropertyAccessers\ConstantAccessor.cs" />
     <Compile Include="Logics\PropertyAccessers\IPropertyAccessor.cs" />
     <Compile Include="Logics\PropertyAccessers\ArgumentPropertyAccessor.cs" />
@@ -66,9 +78,9 @@
     <Compile Include="Logics\PropertySetter.cs" />
     <Compile Include="Logics\PropertyConstraint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RulesParser\GameRulesXmlParser.cs" />
-    <Compile Include="RulesParser\GameRulesParser11.cs" />
-    <Compile Include="RulesParser\IRulesParser.cs" />
+    <Compile Include="GameParser\GameXmlParser.cs" />
+    <Compile Include="GameParser\GameRulesParser11.cs" />
+    <Compile Include="GameParser\IRulesParser.cs" />
     <Compile Include="Utils\SingletonList.cs" />
   </ItemGroup>
   <ItemGroup />

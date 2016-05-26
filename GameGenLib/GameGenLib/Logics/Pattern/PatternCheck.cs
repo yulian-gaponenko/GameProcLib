@@ -1,4 +1,5 @@
 ﻿using GameGenLib.GameEntities;
+using GameGenLib.Logics.Cells;
 
 namespace GameGenLib.Logics.Pattern {
     internal class PatternCheck  : IPattern {
@@ -15,8 +16,8 @@ namespace GameGenLib.Logics.Pattern {
             NextCellDir = nextCellDir;
         }
 
-        public bool Find(CellSequences cellSequences, IPropertyContainer[] args) {
-            return constraint.Check(cellSequences.FirstCell, args);
+        public bool Find(CellsSequences cellsSequences, IPropertyContainer[] args) {
+            return constraint.Check(cellsSequences.FirstCell, args);
         }
 
     }

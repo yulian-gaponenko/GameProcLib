@@ -18,5 +18,6 @@ namespace GameGenLib.GameEntities {
         public Cell GetCell(int x, int y) {
             return FieldCells[y * Size + x];
         }
+        public override string ContainerType => "Field";
     }
 }

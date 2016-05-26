@@ -26,7 +26,7 @@ namespace GameGenLib.GameParser {
         private const string TypeAttributeName = "Type";
         private const string PlayerWinConditionNodeName = "PlayerWinConditionNodeName";
         private const string FieldPropertyNodeName = "FieldProperty";
-        private string MoveActionAttributeName = "MoveAction";
+        private const string MoveActionAttributeName = "MoveAction";
 
         private readonly XDocument doc;
         private readonly PropertiesMapping propertiesMapping;
@@ -52,13 +52,14 @@ namespace GameGenLib.GameParser {
             IList<Player> players = ParsePlayers();
             GameRules gameRules = ParseRules();
 
-            ParseLogics();
-            return new GameContext(field, players, gameRules);
+            GameContext gameContext = new GameContext(field, players, gameRules);
+            ParseLogics(gameContext);
+            return gameContext;
         }
 
-        private void ParseLogics() {
+        private void ParseLogics(GameContext context) {
             var logicsNode = doc.Root.Element(LogicsNodeName);
-            new LogicsParser(logicsNode, logics).ParseLogics();
+            new LogicsParser(logicsNode, logics, context).ParseLogics();
         }
 
         private GameRules ParseRules() {

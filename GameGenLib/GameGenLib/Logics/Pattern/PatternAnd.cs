@@ -1,34 +1,30 @@
 ﻿using System.Collections.Generic;
 using GameGenLib.GameEntities;
+using GameGenLib.Logics.Cells;
 
 namespace GameGenLib.Logics.Pattern {
-    internal class PatternAnd : IPattern {
-        public ShiftDirection NextCellDir { get; }
-        public List<IPattern> ChildPatterns { get; }
-
+    internal class PatternAnd : PatternsAggregator {
         public PatternAnd(List<IPattern> childPatterns) : this(childPatterns, ShiftDirection.None) {
         }
 
-        public PatternAnd(List<IPattern> childPatterns, ShiftDirection nextCellDir) {
-            ChildPatterns = childPatterns;
-            NextCellDir = nextCellDir;
+        public PatternAnd(List<IPattern> childPatterns, ShiftDirection nextCellDir) : base(childPatterns, nextCellDir) {
         }
 
-        public bool Find(CellSequences cellSequences, IPropertyContainer[] args) {
-            CellSequences resultSequence = new CellSequences(cellSequences.FirstCell);
-            CellSequences nextSequence = resultSequence;
+        public override bool Find(CellsSequences cellsSequences, IPropertyContainer[] args) {
+            CellsSequences resultSequence = new CellsSequences(cellsSequences.FirstCell);
+            CellsSequences nextSequence = resultSequence;
             foreach (IPattern childPattern in ChildPatterns) {
                 if (childPattern.NextCellDir != ShiftDirection.None) {
                     Cell nextCell = nextSequence.FirstCell.NextCell(childPattern.NextCellDir);
-                    nextSequence = nextSequence.AddNextCell(nextCell);
+                    nextSequence = nextSequence.AddNextCell(nextCell).ToCellsSequences();
                 }
 
-                if (!childPattern.Find(cellSequences, args)) {
+                if (!childPattern.Find(cellsSequences, args)) {
                     return false;
                 }
                 
             }
-            cellSequences.NextCells.AddRange(resultSequence.NextCells);
+            cellsSequences.NextCells.AddRange(resultSequence.NextCells);
             return true;
         }
     }

@@ -8,5 +8,6 @@ namespace GameGenLib.GameEntities {
     public interface IPropertyContainer {
         int GetProperty(int propName);
         void SetProperty(int propName, int propValue);
+        string ContainerType { get; }
     }
 }

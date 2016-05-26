@@ -1,23 +1,20 @@
 ﻿using System.Collections.Generic;
 using GameGenLib.GameEntities;
+using GameGenLib.Logics.Cells;
 
 namespace GameGenLib.Logics.Pattern {
-    internal class PatternOr : IPattern {
-        public ShiftDirection NextCellDir { get; }
-        public List<IPattern> ChildPatterns { get; }
+    internal class PatternOr : PatternsAggregator {
 
         public PatternOr(List<IPattern> childPatterns) : this(childPatterns, ShiftDirection.None) {
         }
 
-        public PatternOr(List<IPattern> childPatterns, ShiftDirection nextCellDir) {
-            ChildPatterns = childPatterns;
-            NextCellDir = nextCellDir;
+        public PatternOr(List<IPattern> childPatterns, ShiftDirection nextCellDir) : base(childPatterns, nextCellDir) {
         }
 
-        public bool Find(CellSequences cellSequences, IPropertyContainer[] parameters) {
+        public override bool Find(CellsSequences cellsSequences, IPropertyContainer[] parameters) {
             bool any = false;
             foreach (var childPattern in ChildPatterns) {
-                any |= childPattern.Find(cellSequences, parameters);
+                any |= childPattern.Find(cellsSequences, parameters);
             }
             return any;
         }

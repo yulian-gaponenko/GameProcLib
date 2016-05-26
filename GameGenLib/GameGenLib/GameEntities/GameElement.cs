@@ -15,5 +15,7 @@ namespace GameGenLib.GameEntities {
         public void SetProperty(int propName, int propValue) {
             propertites[propName] = propValue;
         }
+
+        public abstract string ContainerType { get; }
     }
 }

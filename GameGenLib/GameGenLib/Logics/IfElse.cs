@@ -1,28 +1,28 @@
-﻿using GameGenLib.GameEntities;
+﻿using System.Collections.Generic;
+using GameGenLib.GameEntities;
+using GameGenLib.Logics.Comparison;
+using GameGenLib.Logics.PropertyAccessers;
 
 namespace GameGenLib.Logics {
     internal class IfElse : ILogic {
-        private readonly IPropertyAccessor equalsLeft;
-        private readonly IPropertyAccessor equalsRight;
+        private readonly IComparison comparison;
+        private readonly ILogic thenLogic;
+        private readonly ILogic elseLogic;
 
-        private readonly PropertySetter thenSetter;
-        private readonly PropertySetter elseSetter;
-
-        public IfElse(IPropertyAccessor equalsLeft, IPropertyAccessor equalsRight, PropertySetter thenSetter, PropertySetter elseSetter) {
-            this.equalsLeft = equalsLeft;
-            this.equalsRight = equalsRight;
-            this.thenSetter = thenSetter;
-            this.elseSetter = elseSetter;
+        public IfElse(IComparison comparison, ILogic thenLogic, ILogic elseLogic) {
+            this.comparison = comparison;
+            this.thenLogic = thenLogic;
+            this.elseLogic = elseLogic;
         }
 
         public void Execute(params IPropertyContainer[] args) {
-            int equalsValueLeft = equalsLeft.GetProperty(args);
-            int equalsValueRight = equalsRight.GetProperty(args);
-            if (equalsValueLeft == equalsValueRight) {
-                thenSetter.Execute(args);
+            if (comparison.Compare(args)) {
+                thenLogic.Execute(args);
             } else {
-                elseSetter.Execute(args);
+                elseLogic.Execute(args);
             }
         }
+
+        public IList<string> ArgsTypes { get; set; }
     }
 }

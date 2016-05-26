@@ -1,6 +1,8 @@
 ﻿using GameGenLib.GameEntities;
 
 namespace GameGenLib.Logics.PropertyAccessers {
+
+    // TODO probably remove
     internal class ConstantAccessor : IPropertyAccessor {
         private readonly int value;
 

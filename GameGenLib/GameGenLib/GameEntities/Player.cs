@@ -9,5 +9,6 @@ namespace GameGenLib.GameEntities {
 
         public int Name { get; }
         public IList<Figure> PlayerFigures { get; }
+        public override string ContainerType => "Player";
     }
 }

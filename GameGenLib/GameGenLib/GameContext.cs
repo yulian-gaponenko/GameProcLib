@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GameGenLib.GameEntities;
+using GameGenLib.Logics;
 
 namespace GameGenLib {
     public class GameContext {
@@ -14,5 +15,7 @@ namespace GameGenLib {
 
         public IList<Player> Players { get; }
         public GameRules GameRules { get; set; }
+        public Player CurrPlayer { get; set; }
+        public Player CurrFigure { get; set; }
     }
 }

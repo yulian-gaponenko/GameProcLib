@@ -5,5 +5,6 @@
         }
 
         public FigureType Type { get; }
+        public override string ContainerType => "Figure";
     }
 }

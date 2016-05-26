@@ -51,5 +51,7 @@ namespace GameGenLib.GameEntities {
 
             return Field.GetCell(nextX, nextY);
         }
+
+        public override string ContainerType => "Cell";
     }
 }

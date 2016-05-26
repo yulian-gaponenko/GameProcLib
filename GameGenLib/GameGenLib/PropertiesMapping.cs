@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GameGenLib {
     internal class PropertiesMapping {
@@ -42,6 +43,21 @@ namespace GameGenLib {
             }
             propertiesMapping[propertyName] = figurePropertiesCount;
             return figurePropertiesCount++;
+        }
+
+        public int GetPropertyIndex(string propertyName, string type) {
+            switch (type) {
+                case "Field":
+                    return GetFieldPropertyIndex(propertyName);
+                case "Player":
+                    return GetPlayerPropertyIndex(propertyName);
+                case "Cell":
+                    return GetCellPropertyIndex(propertyName);;
+                case "Figure":
+                    return GetFigurePropertyIndex(propertyName);
+                default:
+                    throw new Exception("Unknown property container type.");
+            }
         }
     }
 }

@@ -238,7 +238,7 @@
 //
 //            /// <remarks/>
 //            [System.Xml.Serialization.XmlAttributeAttribute()]
-//            public string Type {
+//            public string ContainerType {
 //                get {
 //                    return this.typeField;
 //                }
@@ -325,7 +325,7 @@
 //
 //            /// <remarks/>
 //            [System.Xml.Serialization.XmlAttributeAttribute()]
-//            public string Type {
+//            public string ContainerType {
 //                get {
 //                    return this.typeField;
 //                }
@@ -593,7 +593,7 @@
 //
 //            /// <remarks/>
 //            [System.Xml.Serialization.XmlAttributeAttribute()]
-//            public string Type {
+//            public string ContainerType {
 //                get {
 //                    return this.typeField;
 //                }
@@ -1105,7 +1105,7 @@
 //
 //            /// <remarks/>
 //            [System.Xml.Serialization.XmlAttributeAttribute()]
-//            public string Type {
+//            public string ContainerType {
 //                get {
 //                    return this.typeField;
 //                }

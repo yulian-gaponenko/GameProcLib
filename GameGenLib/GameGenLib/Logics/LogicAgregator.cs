@@ -5,6 +5,10 @@ namespace GameGenLib.Logics {
     class LogicAgregator : ILogic {
         private readonly IList<ILogic> innerLogics = new List<ILogic>();
 
+        public LogicAgregator(IList<string> argsTypes) {
+            ArgsTypes = argsTypes;
+        }
+
         public void AddInnerLogic(ILogic logic) {
             innerLogics.Add(logic);
         }
@@ -15,5 +19,6 @@ namespace GameGenLib.Logics {
             }
         }
 
+        public IList<string> ArgsTypes { get; set; }
     }
 }

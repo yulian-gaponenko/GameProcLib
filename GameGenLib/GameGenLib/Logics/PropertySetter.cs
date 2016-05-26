@@ -1,4 +1,6 @@
-﻿using GameGenLib.GameEntities;
+﻿using System.Collections.Generic;
+using GameGenLib.GameEntities;
+using GameGenLib.Logics.Cells;
 using GameGenLib.Logics.PropertyAccessers;
 
 namespace GameGenLib.Logics {
@@ -6,7 +8,7 @@ namespace GameGenLib.Logics {
         private readonly IPropertyAccessor propertySetter;
         private readonly IPropertyAccessor valueGetter;
 
-        public PropertySetter(ArgumentPropertyAccessor propertySetter, ArgumentPropertyAccessor valueGetter) {
+        public PropertySetter(IPropertyAccessor propertySetter, IPropertyAccessor valueGetter) {
             this.valueGetter = valueGetter;
             this.propertySetter = propertySetter;
         }
@@ -14,5 +16,7 @@ namespace GameGenLib.Logics {
         public void Execute(params IPropertyContainer[] args) {
             propertySetter.SetProperty(valueGetter.GetProperty(args), args);
         }
+
+        public IList<string> ArgsTypes { get; set; }
     }
 }
