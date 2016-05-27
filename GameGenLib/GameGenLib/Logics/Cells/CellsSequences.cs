@@ -29,6 +29,28 @@ namespace GameGenLib.Logics.Cells {
             return cellsSet;
         }
 
+        public CellsSequences FindSingleSequenceByEndCell(Cell cell) {
+            CellsSequences sequence = null;
+            if (NextCells.Count == 0 && cell == FirstCell) { 
+                return new CellsSequences(FirstCell);
+            }
+
+            foreach (var cellsSequencese in NextCells) {
+                sequence = cellsSequencese.FindSingleSequenceByEndCell(cell);
+                if (sequence != null) {
+                    break;
+                }
+            }
+
+            if (sequence != null) {
+                var s = new CellsSequences(FirstCell);
+                s.NextCells.Add(sequence);
+                return s;
+            }
+
+            return null;
+        }
+
         public int NumberOfCells {
             get {
                 int totalNumber = FirstCell != null ? 1 : 0;
@@ -41,7 +63,7 @@ namespace GameGenLib.Logics.Cells {
 
         public int NumberOfSequences {
             get {
-                if (NextCells.Count == 0) {
+                if (NextCells.Count == 0 && FirstCell != null) {
                     return 1;
                 }
 

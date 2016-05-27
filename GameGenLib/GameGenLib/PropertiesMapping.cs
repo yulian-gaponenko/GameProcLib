@@ -9,6 +9,19 @@ namespace GameGenLib {
         private int figurePropertiesCount = 0;
         private readonly IDictionary<string, int> propertiesMapping = new Dictionary<string, int>();
 
+        public int GetFieldPropsCount() {
+            return fieldPropertiesCount;;
+        }
+        public int GetPlayerPropsCount() {
+            return playerPropertiesCount;;
+        }
+        public int GetCellPropsCount() {
+            return cellPropertiesCount;;
+        }
+        public int GetFigurePropsCount() {
+            return figurePropertiesCount;;
+        }
+
         public int GetFieldPropertyIndex(string propertyName) {
             int propertyIndex;
             if (propertiesMapping.TryGetValue(propertyName, out propertyIndex)) {

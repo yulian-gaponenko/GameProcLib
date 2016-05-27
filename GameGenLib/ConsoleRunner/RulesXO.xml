@@ -12,7 +12,7 @@
 		</Player>
 	</Players>
 	<Rules>
-		<!-- <initialFieldState/> -->
+		<InitField Name="InitField"/>
 		<NextMoveEvent Name="NextMoveEvent"/>
 		<EndGame>
 			<PlayerWinCondition Name="X" FieldProperty="5LineX" />
@@ -20,15 +20,24 @@
 		</EndGame>
 	</Rules>
 	<Logics>
-		<Logic Name="PossibleMovesFetcher" Type="MovesFetcher">
+		<Logic Name="PossibleMovesFetcher">
 			<AddCells>
-				<WithProperty Name="Owner" Value="0"/>
+				<WithProperty Name="Owner">
+					<GetProperty Value="-1"/>
+				</WithProperty>
 			</AddCells>
 			<!-- <SaveResult/> -->
 		</Logic>
-		<Logic Name="MoveApplier"> <!-- should be specific type that puts in local buffer LastMoveCells -->
+		<Logic Name="MoveApplier">
 			<SetPropertyToCells Name="Owner">
 				<GetProperty Obj="CurrPlayer" Name="Name"/>
+			</SetPropertyToCells>
+		</Logic>
+
+		<Logic Name="InitField">
+			<AddCells/>
+			<SetPropertyToCells Name="Owner">
+				<GetProperty Value="-1"/>
 			</SetPropertyToCells>
 		</Logic>
 
@@ -38,24 +47,36 @@
 		</Logic>
 
 		<Logic Name="NextMoveEvent">
-			<Do Name="CalculateNumberOf5Line"/>
+			<Do Name="CalculateNumberOf5Line"/> <!-- When using Do pass empty list of args-->
 		</Logic>
 
 		<Logic Name="Find5Lines">
 			<AddCells/>
 			<ApplyPattern Result="AsSequentialCells">
 				<PatternElem Type="|">
-					<PatternElem Quant="5">
-						<PatternElem Name="ulCheck"/>
+					<PatternElem>
+						<PatternElem Name="check"/>
+						<PatternElem Quant="4">
+							<PatternElem Name="ulCheck"/>
+						</PatternElem>
 					</PatternElem>
-					<PatternElem Quant="5">
-						<PatternElem Name="uCheck"/>
+					<PatternElem>
+						<PatternElem Name="check"/>
+						<PatternElem Quant="4">
+							<PatternElem Name="uCheck"/>
+						</PatternElem>
 					</PatternElem>
-					<PatternElem Quant="5">
-						<PatternElem Name="urCheck"/>
+					<PatternElem>
+						<PatternElem Name="check"/>
+						<PatternElem Quant="4">
+							<PatternElem Name="urCheck"/>
+						</PatternElem>
 					</PatternElem>
-					<PatternElem Quant="5">
-						<PatternElem Name="rCheck"/>
+					<PatternElem>
+						<PatternElem Name="check"/>
+						<PatternElem Quant="4">
+							<PatternElem Name="rCheck"/>
+						</PatternElem>
 					</PatternElem>
 				</PatternElem>
 			</ApplyPattern>
@@ -82,6 +103,11 @@
 		</Logic>
 
 		<PatternElems>
+			<PatternElem Name="check" Type="Check">
+		 		<WithProperty Name="Owner">
+		 			<GetProperty Obj="CurrPlayer" Name="Name"/>
+		 		</WithProperty>
+		 	</PatternElem>
 			<PatternElem Name="ulCheck" Direction="ul" Type="Check">
 		 		<WithProperty Name="Owner">
 		 			<GetProperty Obj="CurrPlayer" Name="Name"/>

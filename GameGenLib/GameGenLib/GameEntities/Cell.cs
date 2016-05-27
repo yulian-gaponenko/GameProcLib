@@ -24,28 +24,28 @@ namespace GameGenLib.GameEntities {
                     break;
                 case ShiftDirection.LeftUp:
                     nextX -= 1;
-                    nextY += 1;
+                    nextY -= 1;
                     break;
                 case ShiftDirection.Up:
-                    nextY += 1;
+                    nextY -= 1;
                     break;
                 case ShiftDirection.RightUp:
                     nextX += 1;
-                    nextY += 1;
+                    nextY -= 1;
                     break;
                 case ShiftDirection.Right:
                     nextX += 1;
                     break;
                 case ShiftDirection.RightDown:
                     nextX += 1;
-                    nextY -= 1;
+                    nextY += 1;
                     break;
                 case ShiftDirection.Down:
-                    nextY -= 1;
+                    nextY += 1;
                     break;
                 case ShiftDirection.LeftDown:
                     nextX -= 1;
-                    nextY -= 1;
+                    nextY += 1;
                     break;
             }
 

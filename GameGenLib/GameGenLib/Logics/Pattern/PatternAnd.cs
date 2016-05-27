@@ -16,10 +16,13 @@ namespace GameGenLib.Logics.Pattern {
             foreach (IPattern childPattern in ChildPatterns) {
                 if (childPattern.NextCellDir != ShiftDirection.None) {
                     Cell nextCell = nextSequence.FirstCell.NextCell(childPattern.NextCellDir);
+                    if (nextCell == null) {
+                        return false;
+                    }
                     nextSequence = nextSequence.AddNextCell(nextCell).ToCellsSequences();
                 }
 
-                if (!childPattern.Find(cellsSequences, args)) {
+                if (!childPattern.Find(nextSequence, args)) {
                     return false;
                 }
                 

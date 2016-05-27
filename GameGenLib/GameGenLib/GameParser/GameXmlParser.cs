@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using GameGenLib.GameEntities;
 using GameGenLib.Logics;
+using GameGenLib.Logics.Cells;
 
 namespace GameGenLib.GameParser {
     public class GameXmlParser {
@@ -27,9 +28,11 @@ namespace GameGenLib.GameParser {
         private const string PlayerWinConditionNodeName = "PlayerWinCondition";
         private const string FieldPropertyNodeName = "FieldProperty";
         private const string MoveActionAttributeName = "MoveAction";
+        private const string InitFieldNodeName = "InitField";
 
         private readonly XDocument doc;
         private readonly PropertiesMapping propertiesMapping;
+        private readonly GlobalCollections globalCollections = new GlobalCollections();
         private readonly IDictionary<string, LogicAgregator> logics = new Dictionary<string, LogicAgregator>();
         private readonly IDictionary<string, FigureType> figureTypes = new Dictionary<string, FigureType>();
 
@@ -54,18 +57,37 @@ namespace GameGenLib.GameParser {
 
             GameContext gameContext = new GameContext(field, players, gameRules);
             ParseLogics(gameContext);
+            InitPropertiesForAllGameEntities(gameContext);
             return gameContext;
+        }
+
+        private void InitPropertiesForAllGameEntities(GameContext context) {
+            for (int i = 0; i < context.Field.Size; ++i) {
+                for (int j = 0; j < context.Field.Size; ++j) {
+                    context.Field.GetCell(i, j).InitPropertiesForType(propertiesMapping.GetCellPropsCount());
+                }
+            }
+            context.Field.InitPropertiesForType(propertiesMapping.GetFieldPropsCount());
+            foreach (var player in context.Players) {
+                player.InitPropertiesForType(propertiesMapping.GetPlayerPropsCount());
+                player.SetProperty(propertiesMapping.GetPlayerPropertyIndex("Name"), player.Name);
+                foreach (var playerFigure in player.PlayerFigures) {
+                    playerFigure.InitPropertiesForType(propertiesMapping.GetFigurePropsCount());
+                }
+            }
+            
         }
 
         private void ParseLogics(GameContext context) {
             var logicsNode = doc.Root.Element(LogicsNodeName);
-            new LogicsParser(logicsNode, logics, propertiesMapping, context).ParseLogics();
+            new LogicsParser(logicsNode, logics, propertiesMapping, globalCollections, context).ParseLogics();
         }
 
         private GameRules ParseRules() {
             var rulesNode = doc.Root.Element(RulesNodeName);
             var nextMoveNode = rulesNode.Element(NextMoveEventNodeName);
             var endGameNode = rulesNode.Element(EndGameNodeName);
+            var initFieldNode = rulesNode.Element(InitFieldNodeName);
 
             IDictionary<int, int> playersToWinProperties = new Dictionary<int, int>();
             foreach (var winConditionNode in endGameNode.Elements(PlayerWinConditionNodeName)) {
@@ -74,7 +96,8 @@ namespace GameGenLib.GameParser {
                 playersToWinProperties[GetPlayerName(playerName)] = propertiesMapping.GetFieldPropertyIndex(propertyName);
             }
             ILogic nextMoveEvent = logics[nextMoveNode.Attribute(NameAttributeName).Value];
-            return new GameRules(nextMoveEvent, playersToWinProperties);
+            ILogic initFieldLogic = logics[initFieldNode.Attribute(NameAttributeName).Value];
+            return new GameRules(initFieldLogic, nextMoveEvent, playersToWinProperties);
         }
 
         private void ParseFigureTypes() {
@@ -82,7 +105,11 @@ namespace GameGenLib.GameParser {
                 string figureTypeName = figureNode.Attribute(NameAttributeName).Value;
                 string possibleMoves = figureNode.Attribute(PossibleMovesAttributeName).Value;
                 string moveAction = figureNode.Attribute(MoveActionAttributeName).Value;
-                figureTypes[figureTypeName] = new FigureType(logics[possibleMoves], logics[moveAction]);
+                LogicAgregator moveActionLogic = logics[moveAction];
+                LogicAgregator possibleMovesLogic = logics[possibleMoves];
+                possibleMovesLogic.AddPostLogic(new CellsCopier(globalCollections.LocalBuffer, globalCollections.CurrFigurePossibleMoves));
+                moveActionLogic.AddPreLogic(new CellsCopier(globalCollections.CurrMoveCells, globalCollections.LocalBuffer));
+                figureTypes[figureTypeName] = new FigureType(possibleMovesLogic, moveActionLogic);
             }
             
         }
@@ -137,6 +164,13 @@ namespace GameGenLib.GameParser {
             }
             playerNames[playerName] = playersCount;
             return playersCount++;
+        }
+
+        internal class GlobalCollections {
+            public readonly CellsCollectionHolder LocalBuffer = new CellsCollectionHolder();
+            public readonly CellsCollectionHolder LastLogicResult = new CellsCollectionHolder();
+            public readonly CellsCollectionHolder CurrFigurePossibleMoves = new CellsCollectionHolder();
+            public readonly CellsCollectionHolder CurrMoveCells = new CellsCollectionHolder();
         }
 
         /*

@@ -48,6 +48,7 @@
     <Compile Include="Logics\AddCells.cs" />
     <Compile Include="Logics\ApplyPatternLogic.cs" />
     <Compile Include="Logics\CellsCopier.cs" />
+    <Compile Include="Logics\LocalBufferCleanerHelper.cs" />
     <Compile Include="Logics\PropertyAccessers\CellsCollectionSizeGetter.cs" />
     <Compile Include="Logics\CellsPropertySetter.cs" />
     <Compile Include="Logics\Cells\CellsCollectionHolder.cs" />

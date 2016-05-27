@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using GameGenLib.GameEntities;
 
@@ -14,10 +15,9 @@ namespace GameGenLib.Logics.Cells {
             if (Cells.Count == 0) {
                 throw new InvalidOperationException("Cannot convert empty set to CellsSequences.");
             }
-            CellsSequences cellsSequences = new CellsSequences(Cells[0]);
-            CellsSequences nextCellsSequences = cellsSequences;
-            foreach (Cell cell in Cells.Skip(1)) {
-                nextCellsSequences = nextCellsSequences.AddNextCell(cell).ToCellsSequences();
+            CellsSequences cellsSequences = new CellsSequences(null);
+            foreach (Cell cell in Cells) {
+                cellsSequences.AddNextCell(cell);
             }
             return cellsSequences;
         }

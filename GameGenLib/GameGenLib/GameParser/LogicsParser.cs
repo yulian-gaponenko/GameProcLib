@@ -36,25 +36,24 @@ namespace GameGenLib.GameParser {
         private const string SourceAttributeName = "Source";
         private const string SetPropertyNodeName = "SetProperty";
 
-        private readonly CellsCollectionHolder localBuffer;
-        private readonly CellsCollectionHolder lastLogicResult;
-        private readonly CellsCollectionHolder currFigurePossibleMoves;
-        private readonly CellsCollectionHolder currMoveCells;
+        
 
         private readonly XElement logicsNode;
         private readonly IDictionary<string, LogicAgregator> logics;
         private readonly IDictionary<string, IPattern> patterns;
         private readonly PropertiesMapping propertiesMapping;
+        private readonly GameXmlParser.GlobalCollections globalCollections;
         private readonly GameContext context;
 
         // TODO carefully update this field
         private String[] currentArgTypes;
 
-        public LogicsParser(XElement logicsNode, IDictionary<string, LogicAgregator> logics, PropertiesMapping mapping, GameContext context) {
+        public LogicsParser(XElement logicsNode, IDictionary<string, LogicAgregator> logics, PropertiesMapping mapping, GameXmlParser.GlobalCollections globalCollections, GameContext context) {
             this.logicsNode = logicsNode;
             this.logics = logics;
             this.context = context;
             this.propertiesMapping = mapping;
+            this.globalCollections = globalCollections;
             this.patterns = new Dictionary<string, IPattern>();
         }
 
@@ -66,6 +65,9 @@ namespace GameGenLib.GameParser {
             }
 
             ParsePatternElems(logicsNode.Element(PatternElemsNodeName));
+
+            context.CurrMoveCells = globalCollections.CurrMoveCells;
+            context.CurrFigurePossibleMoves = globalCollections.CurrFigurePossibleMoves;
         }
 
         private void ParsePatternElemsNames(XElement patternElemsNode) {
@@ -119,7 +121,7 @@ namespace GameGenLib.GameParser {
                 if (quantAttribute != null) {
                     int quant = int.Parse(quantAttribute);
                     int origSize = patternsAggregator.ChildPatterns.Count;
-                    for (int i = 0; i < quant; ++i) {
+                    for (int i = 0; i < quant - 1; ++i) {
                         for (int j = 0; j < origSize; ++j) {
                             patternsAggregator.ChildPatterns.Add(patternsAggregator.ChildPatterns[j]);
                         }
@@ -130,7 +132,7 @@ namespace GameGenLib.GameParser {
         }
 
         private void ParseLogic(LogicAgregator logic, XElement logicNode) {
-            // TODO Process specific types of logics
+            logic.AddPreLogic(new LocalBufferCleanerHelper(globalCollections.LocalBuffer));
             foreach (var element in logicNode.Elements()) {
                 logic.AddInnerLogic(ParseLogicElement(element));
             }
@@ -144,7 +146,7 @@ namespace GameGenLib.GameParser {
                     logicElement = ParseAddCellsLogic(element);
                     break;
                 case SaveResultNodeName:
-                    logicElement = new CellsCopier(localBuffer, lastLogicResult);
+                    logicElement = new CellsCopier(globalCollections.LocalBuffer, globalCollections.LastLogicResult);
                     break;
                 case SetPropertyToCellsNodeName:
                     logicElement = ParseCellsPropertySetter(element);
@@ -178,7 +180,7 @@ namespace GameGenLib.GameParser {
             if (value != null) {
                 asSequentialCells = value == "AsSequentialCells";
             }
-            return new ApplyPatternLogic(ParsePatternElem(applyPatternNode.Element(PatternElemNodeName), true), asSequentialCells, localBuffer);
+            return new ApplyPatternLogic(ParsePatternElem(applyPatternNode.Element(PatternElemNodeName), true), asSequentialCells, globalCollections.LocalBuffer);
         }
 
         private ILogic ParseIfElse(XElement ifElseNode) {
@@ -217,7 +219,7 @@ namespace GameGenLib.GameParser {
         private ILogic ParseCellsPropertySetter(XElement cellsPropertySetterNode) {
             string cellPropertyNameValue = cellsPropertySetterNode.Attribute(NameAttributeName).Value;
             int cellProperty = propertiesMapping.GetCellPropertyIndex(cellPropertyNameValue);
-            return new CellsPropertySetter(localBuffer, cellProperty, ParsePropertyAccessor(cellsPropertySetterNode.Element(GetPropertyNodeName)));
+            return new CellsPropertySetter(globalCollections.LocalBuffer, cellProperty, ParsePropertyAccessor(cellsPropertySetterNode.Element(GetPropertyNodeName)));
         }
 
         private IPropertyAccessor ParsePropertyAccessor(XElement propertyAccessorNode) {
@@ -246,7 +248,7 @@ namespace GameGenLib.GameParser {
         }
 
         private ILogic ParseAddCellsLogic(XElement element) {
-            AddCells addCellsLogic = new AddCells(localBuffer, context.Field);
+            AddCells addCellsLogic = new AddCells(globalCollections.LocalBuffer, context.Field);
             foreach (var withPropertyNode in element.Elements(WithPropertyNodeName)) {
                 PropertyConstraint constraint = ParsePropertyConstraint(withPropertyNode);
                 addCellsLogic.AddConstraint(constraint);
@@ -258,12 +260,7 @@ namespace GameGenLib.GameParser {
             string cellPropertyName = withPropertyNode.Attribute(NameAttributeName).Value;
             int propName = propertiesMapping.GetCellPropertyIndex(cellPropertyName);
 
-            IPropertyAccessor accessor = null;
-            var valueAttribute = withPropertyNode.Attribute(ValueAttributeName);
-            if (valueAttribute != null) {
-                accessor = new ConstantAccessor(int.Parse(valueAttribute.Value));
-            }
-            // TODO other cases
+            IPropertyAccessor accessor = ParsePropertyAccessor(withPropertyNode.Element(GetPropertyNodeName));
             return new PropertyConstraint(propName, accessor);
         }
 
@@ -287,13 +284,13 @@ namespace GameGenLib.GameParser {
         public CellsCollectionHolder GetGlobalCellsCollection(string collectionName) {
             switch (collectionName) {
                 case "LocalBuffer":
-                    return localBuffer;
+                    return globalCollections.LocalBuffer;
                 case "LastLogicResult":
-                    return lastLogicResult;
+                    return globalCollections.LastLogicResult;
                 case "CurrFigurePossibleMoves":
-                    return currFigurePossibleMoves;
+                    return globalCollections.CurrFigurePossibleMoves;
                 case "CurrMoveCells":
-                    return currMoveCells;
+                    return globalCollections.CurrMoveCells;
                 default:
                     throw new Exception($"Unknown global cells collection name: {collectionName}");
             }
