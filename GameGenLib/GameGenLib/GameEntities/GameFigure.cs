@@ -1,6 +1,6 @@
 ﻿namespace GameGenLib.GameEntities {
-    public class Figure : GameElement {
-        public Figure(FigureType type) {
+    public class GameFigure : GameElement {
+        public GameFigure(FigureType type) {
             Type = type;
         }
 

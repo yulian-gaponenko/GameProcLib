@@ -7,7 +7,7 @@ using GameGenLib.GameEntities;
 using GameGenLib.Logics;
 
 namespace GameGenLib.GameParser {
-    internal class GameXmlParser {
+    public class GameXmlParser {
         private const string FieldNodeName = "Field";
         private const string LogicsNodeName = "Logics";
         private const string LogicNodeName = "Logic";
@@ -22,9 +22,9 @@ namespace GameGenLib.GameParser {
 
         private const string SizeAttributeName = "Size";
         private const string NameAttributeName = "Name";
-        private const string PossibleMovesAttributeName = "PossibleMovesAttributeName";
+        private const string PossibleMovesAttributeName = "PossibleMoves";
         private const string TypeAttributeName = "Type";
-        private const string PlayerWinConditionNodeName = "PlayerWinConditionNodeName";
+        private const string PlayerWinConditionNodeName = "PlayerWinCondition";
         private const string FieldPropertyNodeName = "FieldProperty";
         private const string MoveActionAttributeName = "MoveAction";
 
@@ -49,7 +49,7 @@ namespace GameGenLib.GameParser {
             GameField field = ParseField();
             ParseLogicsNames();
             ParseFigureTypes();
-            IList<Player> players = ParsePlayers();
+            IList<GamePlayer> players = ParsePlayers();
             GameRules gameRules = ParseRules();
 
             GameContext gameContext = new GameContext(field, players, gameRules);
@@ -59,7 +59,7 @@ namespace GameGenLib.GameParser {
 
         private void ParseLogics(GameContext context) {
             var logicsNode = doc.Root.Element(LogicsNodeName);
-            new LogicsParser(logicsNode, logics, context).ParseLogics();
+            new LogicsParser(logicsNode, logics, propertiesMapping, context).ParseLogics();
         }
 
         private GameRules ParseRules() {
@@ -87,24 +87,24 @@ namespace GameGenLib.GameParser {
             
         }
 
-        private IList<Player> ParsePlayers() {
+        private IList<GamePlayer> ParsePlayers() {
             var playersNode = doc.Root.Element(PlayersNodeName);
-            IList<Player> players = new List<Player>();
+            IList<GamePlayer> players = new List<GamePlayer>();
             foreach (var playerNode in playersNode.Elements(PlayerNodeName)) {
-                IList<Figure> playerFigures = ParsePlayerFigures(playerNode);
+                IList<GameFigure> playerFigures = ParsePlayerFigures(playerNode);
                 string value = playerNode.Attribute(NameAttributeName).Value;
-                Player player = new Player(GetPlayerName(value), playerFigures);
-                players.Add(player);
+                GamePlayer gamePlayer = new GamePlayer(GetPlayerName(value), playerFigures);
+                players.Add(gamePlayer);
             }
 
             return players;
         }
 
-        private IList<Figure> ParsePlayerFigures(XElement playerNode) {
-            IList<Figure> playerFigures = new List<Figure>();
+        private IList<GameFigure> ParsePlayerFigures(XElement playerNode) {
+            IList<GameFigure> playerFigures = new List<GameFigure>();
             foreach (var playerFigureNode in playerNode.Elements(PlayerFigureNodeName)) {
                 string type = playerFigureNode.Attribute(TypeAttributeName).Value;
-                playerFigures.Add(new Figure(figureTypes[type]));
+                playerFigures.Add(new GameFigure(figureTypes[type]));
             }
             return playerFigures;
         }

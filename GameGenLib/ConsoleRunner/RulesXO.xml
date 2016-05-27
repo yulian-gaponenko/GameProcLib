@@ -1,0 +1,107 @@
+<Game>
+	<Field Size="64"/>
+	<Figures>
+		<Figure Name="PlayerMark" PossibleMoves="PossibleMovesFetcher" MoveAction="MoveApplier"/>
+	</Figures>
+	<Players>
+		<Player Name="X">
+			<PlayerFigure Type="PlayerMark"/>
+		</Player>
+		<Player Name="O">
+			<PlayerFigure Type="PlayerMark"/>
+		</Player>
+	</Players>
+	<Rules>
+		<!-- <initialFieldState/> -->
+		<NextMoveEvent Name="NextMoveEvent"/>
+		<EndGame>
+			<PlayerWinCondition Name="X" FieldProperty="5LineX" />
+			<PlayerWinCondition Name="O" FieldProperty="5LineO" />
+		</EndGame>
+	</Rules>
+	<Logics>
+		<Logic Name="PossibleMovesFetcher" Type="MovesFetcher">
+			<AddCells>
+				<WithProperty Name="Owner" Value="0"/>
+			</AddCells>
+			<!-- <SaveResult/> -->
+		</Logic>
+		<Logic Name="MoveApplier"> <!-- should be specific type that puts in local buffer LastMoveCells -->
+			<SetPropertyToCells Name="Owner">
+				<GetProperty Obj="CurrPlayer" Name="Name"/>
+			</SetPropertyToCells>
+		</Logic>
+
+		<Logic Name="CalculateNumberOf5Line">
+			<Do Name="Find5Lines" />
+			<Do Name="CalcAndSetNumOf5" />
+		</Logic>
+
+		<Logic Name="NextMoveEvent">
+			<Do Name="CalculateNumberOf5Line"/>
+		</Logic>
+
+		<Logic Name="Find5Lines">
+			<AddCells/>
+			<ApplyPattern Result="AsSequentialCells">
+				<PatternElem Type="|">
+					<PatternElem Quant="5">
+						<PatternElem Name="ulCheck"/>
+					</PatternElem>
+					<PatternElem Quant="5">
+						<PatternElem Name="uCheck"/>
+					</PatternElem>
+					<PatternElem Quant="5">
+						<PatternElem Name="urCheck"/>
+					</PatternElem>
+					<PatternElem Quant="5">
+						<PatternElem Name="rCheck"/>
+					</PatternElem>
+				</PatternElem>
+			</ApplyPattern>
+			<SaveResult/>
+		</Logic>
+
+		<Logic Name="CalcAndSetNumOf5">
+			<IfElse Then="SetSizeTo5LineX" Else="SetSizeTo5LineO">
+				<Equals>
+					<GetProperty Obj="CurrPlayer" Name="Name"/>
+					<GetProperty Obj="Player0" Name="Name"/>
+				</Equals>
+			</IfElse>
+		</Logic>
+		<Logic Name="SetSizeTo5LineX">
+			<SetProperty Obj="Field" Name="5LineX">
+				<GetProperty Source="LastLogicResult" Name="Size"/>
+			</SetProperty>
+		</Logic>
+		<Logic Name="SetSizeTo5LineO">
+			<SetProperty Obj="Field" Name="5LineO">
+				<GetProperty Source="LastLogicResult"/>
+			</SetProperty>
+		</Logic>
+
+		<PatternElems>
+			<PatternElem Name="ulCheck" Direction="ul" Type="Check">
+		 		<WithProperty Name="Owner">
+		 			<GetProperty Obj="CurrPlayer" Name="Name"/>
+		 		</WithProperty>
+		 	</PatternElem>
+			<PatternElem Name="uCheck" Direction="u" Type="Check">
+		 		<WithProperty Name="Owner">
+		 			<GetProperty Obj="CurrPlayer" Name="Name"/>
+		 		</WithProperty>
+		 	</PatternElem>
+			<PatternElem Name="urCheck" Direction="ur" Type="Check">
+		 		<WithProperty Name="Owner">
+		 			<GetProperty Obj="CurrPlayer" Name="Name"/>
+		 		</WithProperty>
+		 	</PatternElem>
+			<PatternElem Name="rCheck" Direction="r" Type="Check">
+		 		<WithProperty Name="Owner">
+		 			<GetProperty Obj="CurrPlayer" Name="Name"/>
+		 		</WithProperty>
+		 	</PatternElem>
+		</PatternElems>
+	</Logics>
+</Game>

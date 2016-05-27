@@ -34,6 +34,7 @@ namespace GameGenLib.GameParser {
         private const string TypeAttributeName = "Type";
         private const string ApplyPatternNodeName = "ApplyPattern";
         private const string SourceAttributeName = "Source";
+        private const string SetPropertyNodeName = "SetProperty";
 
         private readonly CellsCollectionHolder localBuffer;
         private readonly CellsCollectionHolder lastLogicResult;
@@ -101,7 +102,7 @@ namespace GameGenLib.GameParser {
             if (shiftAttribute != null) {
                 dir = ShiftDirectionFromString(shiftAttribute.Value);
             }
-            string patternType = patternElemNode.Attribute(TypeAttributeName).Value;
+            string patternType = patternElemNode.Attribute(TypeAttributeName)?.Value;
             IPattern pattern;
             if (patternType == "Check") {
                 var constraint = ParsePropertyConstraint(patternElemNode.Element(WithPropertyNodeName));
@@ -157,11 +158,18 @@ namespace GameGenLib.GameParser {
                 case ApplyPatternNodeName:
                     logicElement = ParseApplyPattern(element);
                     break;
+                case SetPropertyNodeName:
+                    logicElement = ParseSetProperty(element);
+                    break;
                 default:
                     throw new Exception($"Unknown logic element {elementName}");
             }
 
             return logicElement;
+        }
+
+        private ILogic ParseSetProperty(XElement setPropertyNode) {
+            return new PropertySetter(ParsePropertyAccessor(setPropertyNode), ParsePropertyAccessor(setPropertyNode.Element(GetPropertyNodeName)));
         }
 
         private ILogic ParseApplyPattern(XElement applyPatternNode) {
@@ -189,6 +197,7 @@ namespace GameGenLib.GameParser {
 
         private IComparison ParseEqualsNode(XElement equalsNode) {
             var propertyAccessorNodes = equalsNode.Elements(GetPropertyNodeName).GetEnumerator();
+            propertyAccessorNodes.MoveNext();
             var leftNode = propertyAccessorNodes.Current;
             propertyAccessorNodes.MoveNext();
             var rightNode = propertyAccessorNodes.Current;

@@ -40,13 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameEntities\FigureHolder.cs" />
     <Compile Include="GameEntities\GameRules.cs" />
+    <Compile Include="GameEntities\PlayerHolder.cs" />
     <Compile Include="GameEntities\ShiftDirection.cs" />
     <Compile Include="GameParser\LogicsParser.cs" />
     <Compile Include="Logics\AddCells.cs" />
+    <Compile Include="Logics\ApplyPatternLogic.cs" />
     <Compile Include="Logics\CellsCopier.cs" />
+    <Compile Include="Logics\PropertyAccessers\CellsCollectionSizeGetter.cs" />
     <Compile Include="Logics\CellsPropertySetter.cs" />
-    <Compile Include="Logics\Cells\CellsCollection.cs" />
+    <Compile Include="Logics\Cells\CellsCollectionHolder.cs" />
     <Compile Include="Logics\Cells\CellsSequences.cs" />
     <Compile Include="Logics\Cells\CellsSet.cs" />
     <Compile Include="Logics\Cells\ICells.cs" />
@@ -64,10 +68,10 @@
     <Compile Include="GameEntities\Cell.cs" />
     <Compile Include="GameEntities\FigureType.cs" />
     <Compile Include="GameEntities\GameField.cs" />
-    <Compile Include="GameEntities\Figure.cs" />
+    <Compile Include="GameEntities\GameFigure.cs" />
     <Compile Include="GameEntities\GameElement.cs" />
     <Compile Include="GameEntities\IPropertyContainer.cs" />
-    <Compile Include="GameEntities\Player.cs" />
+    <Compile Include="GameEntities\GamePlayer.cs" />
     <Compile Include="GameContext.cs" />
     <Compile Include="Logics\Pattern\PatternOr.cs" />
     <Compile Include="Logics\Pattern\IPattern.cs" />
@@ -79,7 +83,6 @@
     <Compile Include="Logics\PropertyConstraint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GameParser\GameXmlParser.cs" />
-    <Compile Include="GameParser\GameRulesParser11.cs" />
     <Compile Include="GameParser\IRulesParser.cs" />
     <Compile Include="Utils\SingletonList.cs" />
   </ItemGroup>
