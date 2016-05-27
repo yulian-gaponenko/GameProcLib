@@ -53,31 +53,12 @@
 		<Logic Name="Find5Lines">
 			<AddCells/>
 			<ApplyPattern Result="AsSequentialCells">
-				<PatternElem Type="|">
-					<PatternElem>
-						<PatternElem Name="check"/>
-						<PatternElem Quant="4">
-							<PatternElem Name="ulCheck"/>
-						</PatternElem>
-					</PatternElem>
-					<PatternElem>
-						<PatternElem Name="check"/>
-						<PatternElem Quant="4">
-							<PatternElem Name="uCheck"/>
-						</PatternElem>
-					</PatternElem>
-					<PatternElem>
-						<PatternElem Name="check"/>
-						<PatternElem Quant="4">
-							<PatternElem Name="urCheck"/>
-						</PatternElem>
-					</PatternElem>
-					<PatternElem>
-						<PatternElem Name="check"/>
-						<PatternElem Quant="4">
-							<PatternElem Name="rCheck"/>
-						</PatternElem>
-					</PatternElem>
+				<PatternElem>
+					<PatternElem Name="check"/>
+					<PatternElem Name="urCheck"/>
+					<PatternElem Name="urCheck"/>
+					<PatternElem Name="uCheck"/>
+					<PatternElem Name="uCheck"/>
 				</PatternElem>
 			</ApplyPattern>
 			<SaveResult/>
@@ -119,6 +100,11 @@
 		 		</WithProperty>
 		 	</PatternElem>
 			<PatternElem Name="urCheck" Direction="ur" Type="Check">
+		 		<WithProperty Name="Owner">
+		 			<GetProperty Obj="CurrPlayer" Name="Name"/>
+		 		</WithProperty>
+		 	</PatternElem>
+			<PatternElem Name="drCheck" Direction="dr" Type="Check">
 		 		<WithProperty Name="Owner">
 		 			<GetProperty Obj="CurrPlayer" Name="Name"/>
 		 		</WithProperty>

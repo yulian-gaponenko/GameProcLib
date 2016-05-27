@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameGenLib", "GameGenLib\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleRunner", "ConsoleRunner\ConsoleRunner.csproj", "{98541ED8-9BF7-4884-82B6-EB96024F4B51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameGenVisualizer", "GameGenVisualizer\GameGenVisualizer.csproj", "{74894C22-03F6-429B-9AD0-4B25ABCD7E52}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{98541ED8-9BF7-4884-82B6-EB96024F4B51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98541ED8-9BF7-4884-82B6-EB96024F4B51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98541ED8-9BF7-4884-82B6-EB96024F4B51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74894C22-03F6-429B-9AD0-4B25ABCD7E52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74894C22-03F6-429B-9AD0-4B25ABCD7E52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74894C22-03F6-429B-9AD0-4B25ABCD7E52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74894C22-03F6-429B-9AD0-4B25ABCD7E52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
